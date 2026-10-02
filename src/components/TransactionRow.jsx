@@ -6,27 +6,36 @@ import {
   Laptop,
 } from "lucide-react";
 
-function TransactionRow() {
+function TransactionRow({id , title , category , date ,amount , type}) {
+  const categoryIcons = {
+  Food: Utensils,
+  Shopping: ShoppingCart,
+  Transport: Car,
+  Work: BriefcaseBusiness,
+  Technology: Laptop,
+};
+
+const Icon = categoryIcons[category]
   return (
     <div className="transaction-row">
       <div className="transaction-name">
         <div className="transaction-icon expense">
-          <Utensils size={18} />
+          <Icon  size={18} />
         </div>
 
-        <strong>Restaurant</strong>
+        <strong>{title}</strong>
       </div>
 
-      <span className="category-name">
-        Food
+      <span  className="category-name">
+        {category}
       </span>
 
       <span className="transaction-date">
-        Sep 30, 2026
+        {date} 
       </span>
 
-      <span className="transaction-amount expense">
-        - 450 AFN
+      <span  className={`transaction-amount ${type}` }>
+       {type === "income" ? '+' : '-'}  {amount}
       </span>
     </div>
   );

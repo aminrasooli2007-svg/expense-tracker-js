@@ -1,14 +1,26 @@
 import SummaryCard from "./SummaryCard";
 
-function SummaryCards() {
+function SummaryCards({ totalIncome, totalExpenses, balance , totalTransactions }) {
   return (
     <section className="summary-grid">
-      <SummaryCard />
+      <SummaryCard title="Total Balance"
+        amount={balance}
+        type="balance" />
 
-      <SummaryCard />
+      <SummaryCard title="Total Income"
+        amount={totalIncome}
+        type="income" />
 
-      <SummaryCard />
+      <SummaryCard title="Total Expenses"
+        amount={totalExpenses}
+        type="expense" />
+
+        <SummaryCard title="Total Transactions"
+        amount={totalTransactions}
+        type="transaction" />
+
     </section>
+
   );
 }
 

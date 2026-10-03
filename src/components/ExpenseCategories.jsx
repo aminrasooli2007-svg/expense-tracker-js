@@ -1,6 +1,17 @@
 import CategoryItem from "./CategoryItem";
 
-function ExpenseCategories() {
+function ExpenseCategories({ transactions, totalExpenses }) {
+
+  const expenses = transactions.filter((transaction) => {
+    return transaction.type === "expense";
+  });
+
+  const categoryTotals = expenses.reduce((acc, transaction) => {
+    acc[transaction.category] =
+      (acc[transaction.category] || 0) + transaction.amount;
+
+    return acc;
+  }, {});
   return (
     <div className="content-card categories-card">
       <div className="card-header">
@@ -11,10 +22,15 @@ function ExpenseCategories() {
       </div>
 
       <div className="categories-list">
-        <CategoryItem />
-        <CategoryItem />
-        <CategoryItem />
-        <CategoryItem />
+        {Object.entries(categoryTotals).map(([category, amount]) => {
+        const percentage = (amount / totalExpenses) * 100; 
+        return (
+        <CategoryItem 
+        key={category} 
+        category={category} 
+        amount={amount} 
+        percentage={percentage} 
+        />)})}
       </div>
     </div>
   );

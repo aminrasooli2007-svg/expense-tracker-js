@@ -291,7 +291,7 @@ a {
 
 .summary-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 18px;
 
   margin-bottom: 22px;
@@ -586,8 +586,30 @@ a {
   color: var(--text-secondary);
   font-size: 11px;
 }
+.delete-button {
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-/* Responsive */
+  border: 1px solid var(--border);
+  border-radius: 8px;
+
+  background: transparent;
+  color: var(--muted);
+
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.delete-button:hover {
+  color: var(--expense);
+  border-color: var(--expense);
+  background: rgba(251, 113, 133, 0.08);
+}
+
+
 
 @media (max-width: 1100px) {
   .dashboard-grid {

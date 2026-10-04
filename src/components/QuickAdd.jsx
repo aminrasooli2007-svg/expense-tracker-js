@@ -1,19 +1,27 @@
 import { Plus } from "lucide-react";
 
-function QuickAdd() {
+function QuickAdd({ onAdd }) {
   return (
     <div className="content-card quick-add">
+
       <div className="card-header">
+
         <div>
           <h3>Quick Add</h3>
           <p>Add a new transaction</p>
         </div>
+
       </div>
 
-      <button className="quick-add-button">
+      <button
+        className="quick-add-button"
+        onClick={onAdd}
+      >
         <Plus size={19} />
+
         Add Transaction
       </button>
+
     </div>
   );
 }

@@ -6,10 +6,14 @@ import {
   Wallet,
 } from "lucide-react";
 
-function Sidebar() {
+function Sidebar({ activePage, setActivePage }) {
+  const handleNavigation = (page) => {
+    setActivePage(page);
+  };
+
   return (
     <aside className="sidebar">
-      {/* Logo */}
+
       <div className="logo">
         <div className="logo-icon">
           <Wallet size={21} />
@@ -18,37 +22,64 @@ function Sidebar() {
         <span>ExpenseFlow</span>
       </div>
 
-      {/* Navigation */}
       <nav className="nav">
-        <p className="nav-title">MAIN MENU</p>
 
-        <a href="#" className="nav-item active">
+        <p className="nav-title">
+          MAIN MENU
+        </p>
+
+        <button
+          className={`nav-item ${
+            activePage === "dashboard" ? "active" : ""
+          }`}
+          onClick={() => handleNavigation("dashboard")}
+        >
           <LayoutDashboard size={18} />
+
           <span>Dashboard</span>
-        </a>
+        </button>
 
-        <a href="#" className="nav-item">
+        <button
+          className={`nav-item ${
+            activePage === "transactions" ? "active" : ""
+          }`}
+          onClick={() => handleNavigation("transactions")}
+        >
           <ArrowLeftRight size={18} />
-          <span>Transactions</span>
-        </a>
 
-        <a href="#" className="nav-item">
+          <span>Transactions</span>
+        </button>
+
+        <button
+          className={`nav-item ${
+            activePage === "categories" ? "active" : ""
+          }`}
+          onClick={() => handleNavigation("categories")}
+        >
           <ChartPie size={18} />
+
           <span>Categories</span>
-        </a>
+        </button>
 
         <p className="nav-title settings-title">
           SETTINGS
         </p>
 
-        <a href="#" className="nav-item">
+        <button
+          className={`nav-item ${
+            activePage === "settings" ? "active" : ""
+          }`}
+          onClick={() => handleNavigation("settings")}
+        >
           <Settings size={18} />
+
           <span>Settings</span>
-        </a>
+        </button>
+
       </nav>
 
-      {/* Profile */}
       <div className="profile">
+
         <div className="profile-avatar">
           AR
         </div>
@@ -57,7 +88,9 @@ function Sidebar() {
           <strong>Amin Rasooli</strong>
           <span>Personal Account</span>
         </div>
+
       </div>
+
     </aside>
   );
 }

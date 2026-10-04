@@ -5,9 +5,19 @@ import {
   ShoppingCart,
   Laptop,
   Trash2,
+  Pencil,
 } from "lucide-react";
 
-function TransactionRow({ id, title, category, date, amount, type, onDelete }) {
+function TransactionRow({
+  id,
+  title,
+  category,
+  date,
+  amount,
+  type,
+  onDelete,
+  onEdit,
+}) {
   const categoryIcons = {
     Food: Utensils,
     Shopping: ShoppingCart,
@@ -16,9 +26,11 @@ function TransactionRow({ id, title, category, date, amount, type, onDelete }) {
     Technology: Laptop,
   };
 
-  const Icon = categoryIcons[category]
+  const Icon = categoryIcons[category];
+
   return (
     <div className="transaction-row">
+
       <div className="transaction-name">
         <div className="transaction-icon expense">
           <Icon size={18} />
@@ -36,16 +48,29 @@ function TransactionRow({ id, title, category, date, amount, type, onDelete }) {
       </span>
 
       <span className={`transaction-amount ${type}`}>
-        {type === "income" ? '+' : '-'}  {amount}
+        {type === "income" ? "+" : "-"} {amount}
       </span>
 
-      <button
-        className="delete-button"
-        onClick={() => onDelete(id)}
-        title="Delete transaction"
-      >
-        <Trash2 size={17} />
-      </button>
+      <div className="transaction-actions">
+
+        <button
+          className="edit-button"
+          onClick={() => onEdit(id)}
+          title="Edit transaction"
+        >
+          <Pencil size={16} />
+        </button>
+
+        <button
+          className="delete-button"
+          onClick={() => onDelete(id)}
+          title="Delete transaction"
+        >
+          <Trash2 size={17} />
+        </button>
+
+      </div>
+
     </div>
   );
 }

@@ -506,8 +506,6 @@ a {
   color: var(--expense);
 }
 
-/* Right column */
-
 .right-column {
   display: flex;
   flex-direction: column;
@@ -609,7 +607,137 @@ a {
   background: rgba(251, 113, 133, 0.08);
 }
 
+.transaction-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+}
 
+.edit-button,
+.delete-button {
+  width: 34px;
+  height: 34px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: none;
+  border-radius: 8px;
+
+  background: transparent;
+  cursor: pointer;
+}
+
+.edit-button {
+  color: var(--text-secondary);
+}
+
+.edit-button:hover {
+  background: var(--card-hover);
+  color: var(--primary);
+}
+
+.delete-button {
+  color: var(--text-secondary);
+}
+
+.delete-button:hover {
+  background: var(--card-hover);
+  color: var(--expense);
+}
+
+.delete-modal {
+  position: relative;
+
+  width: 100%;
+  max-width: 420px;
+
+  padding: 28px;
+
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+
+  text-align: center;
+
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+}
+
+.delete-modal .modal-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+}
+
+.delete-icon {
+  width: 52px;
+  height: 52px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin: 0 auto 16px;
+
+  border-radius: 50%;
+
+  background: rgba(251, 113, 133, 0.12);
+  color: #fb7185;
+}
+
+.delete-modal h2 {
+  margin: 0 0 10px;
+
+  font-size: 20px;
+  color: var(--text);
+}
+
+.delete-modal p {
+  margin: 0 auto;
+
+  max-width: 340px;
+
+  color: var(--text-secondary);
+
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.delete-modal p strong {
+  color: var(--text);
+}
+
+.delete-actions {
+  display: flex;
+  justify-content: center;
+
+  gap: 10px;
+
+  margin-top: 24px;
+}
+
+.confirm-delete-button {
+  height: 42px;
+
+  padding: 0 20px;
+
+  border: none;
+  border-radius: 9px;
+
+  background: #fb7185;
+  color: white;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.confirm-delete-button:hover {
+  opacity: 0.9;
+}
 
 @media (max-width: 1100px) {
   .dashboard-grid {
@@ -619,6 +747,296 @@ a {
   .right-column {
     display: grid;
     grid-template-columns: 1fr 1fr;
+  }
+}
+
+
+.transaction-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 20px 0;
+}
+
+.search-box {
+  flex: 1;
+  max-width: 360px;
+  height: 42px;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 0 14px;
+
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+
+  color: var(--muted);
+}
+
+.search-box:focus-within {
+  border-color: var(--primary);
+}
+
+.search-box input {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+
+  color: var(--text);
+  font-size: 14px;
+}
+
+.search-box input::placeholder {
+  color: var(--muted);
+}
+
+.filter-group {
+  display: flex;
+  gap: 10px;
+}
+
+.filter-select,
+.category-select {
+  height: 42px;
+
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 0 12px;
+
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+
+  color: var(--text);
+}
+
+.filter-select select,
+.category-select {
+  border: none;
+  outline: none;
+  background: transparent;
+
+  color: var(--text);
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.filter-select option,
+.category-select option {
+  background: var(--card);
+  color: var(--text);
+}
+
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+
+  background: rgba(0, 0, 0, 0.45);
+
+  z-index: 1000;
+}
+
+.transaction-modal {
+  width: 100%;
+  max-width: 520px;
+
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+
+  padding: 24px;
+
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+}
+
+.modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  margin-bottom: 24px;
+}
+
+.modal-header h2 {
+  margin: 0 0 5px;
+  font-size: 20px;
+}
+
+.modal-header p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.modal-close {
+  width: 36px;
+  height: 36px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: none;
+  border-radius: 8px;
+
+  background: transparent;
+  color: var(--text-secondary);
+
+  cursor: pointer;
+}
+
+.modal-close:hover {
+  background: var(--card-hover);
+  color: var(--text);
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  height: 42px;
+
+  padding: 0 12px;
+
+  border: 1px solid var(--border);
+  border-radius: 9px;
+
+  outline: none;
+
+  background: var(--bg);
+  color: var(--text);
+
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  border-color: var(--primary);
+}
+
+.form-group input::placeholder {
+  color: var(--muted);
+}
+
+.form-group option {
+  background: var(--card);
+  color: var(--text);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+
+  margin-top: 24px;
+}
+
+.cancel-button,
+.save-button {
+  height: 42px;
+
+  padding: 0 18px;
+
+  border-radius: 9px;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.cancel-button {
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-secondary);
+}
+
+.cancel-button:hover {
+  background: var(--card-hover);
+  color: var(--text);
+}
+
+.save-button {
+  border: none;
+  background: var(--primary);
+  color: white;
+}
+
+.save-button:hover {
+  opacity: 0.9;
+}
+
+@media (max-width: 600px) {
+  .transaction-modal {
+    padding: 20px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .modal-actions {
+    flex-direction: column-reverse;
+  }
+
+  .cancel-button,
+  .save-button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 700px) {
+  .transaction-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-box {
+    max-width: none;
+  }
+
+  .filter-group {
+    width: 100%;
+  }
+
+  .filter-select,
+  .category-select {
+    flex: 1;
   }
 }
 

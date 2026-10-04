@@ -1,21 +1,38 @@
-
 import TransactionRow from "./TransactionRow";
-function RecentTransactions({transactions , deleteTransaction ,addTransaction}) {
-  
+import TransactionToolbar from "./TransactionToolbar";
+
+function RecentTransactions({
+  transactions,
+  deleteTransaction,
+  editTransaction,
+  search,
+  setSearch,
+  typeFilter,
+  setTypeFilter,
+  categoryFilter,
+  setCategoryFilter,
+}) {
   return (
     <div className="content-card transactions-card">
+
       <div className="card-header">
         <div>
           <h3>Recent Transactions</h3>
           <p>Your latest financial activity</p>
         </div>
-
-        <button className="view-all" onClick={addTransaction}>
-          View all
-        </button>
       </div>
 
+      <TransactionToolbar
+        search={search}
+        setSearch={setSearch}
+        typeFilter={typeFilter}
+        setTypeFilter={setTypeFilter}
+        categoryFilter={categoryFilter}
+        setCategoryFilter={setCategoryFilter}
+      />
+
       <div className="transaction-table">
+
         <div className="table-head">
           <span>Transaction</span>
           <span>Category</span>
@@ -23,19 +40,28 @@ function RecentTransactions({transactions , deleteTransaction ,addTransaction}) 
           <span>Amount</span>
         </div>
 
-        {
+        {transactions.length > 0 ? (
           transactions.map((item) => {
-            return <TransactionRow key={item.id}
-             id={item.id}
-              title={item.title}
-               category={item.category}
+            return (
+              <TransactionRow
+                key={item.id}
+                id={item.id}
+                title={item.title}
+                category={item.category}
                 date={item.date}
-                 amount={item.amount} 
-                 type={item.type}
-                 onDelete={()=>deleteTransaction(item.id)}
-                 />
+                amount={item.amount}
+                type={item.type}
+                onDelete={() => deleteTransaction(item.id)}
+                onEdit={() => editTransaction(item.id)}
+              />
+            );
           })
-        }
+        ) : (
+          <div className="empty-transactions">
+            No transactions found.
+          </div>
+        )}
+
       </div>
     </div>
   );

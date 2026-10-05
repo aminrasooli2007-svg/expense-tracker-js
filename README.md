@@ -1,64 +1,185 @@
-# 💰 Expense & Income Tracker
+# ExpenseFlow
 
-A modern web application for tracking income and expenses, built with React.js.
+A modern, responsive, and feature-rich personal expense management application built with React.
 
-This project is currently under development as part of my frontend development journey.
+ExpenseFlow helps users track income and expenses, organize transactions, monitor their financial balance, and manage their personal financial activity through a clean and intuitive interface.
 
-## ✨ Current Features
+## ✨ Features
 
-* 💵 Add income and expense transactions
-* 📊 Display income and expense information
-* 🗂️ Categorize transactions
-* 📈 View financial summaries
-* ⚛️ Built with React components
-* 🎨 Styled with Tailwind CSS
+### Authentication
 
-## 🛠️ Technologies
+* Frontend login system
+* First name and last name
+* Password validation
+* Login and logout
+* Persistent login using LocalStorage
 
-* HTML5
-* CSS3
+### Transaction Management
+
+* Add transactions
+* Edit transactions
+* Delete transactions
+* Delete confirmation modal
+* Income and expense types
+* Transaction categories
+* Transaction dates
+* Automatic transaction calculations
+
+### Search & Filters
+
+* Search transactions by title
+* Filter by transaction type
+* Filter by category
+* Combined search and filtering
+
+### Dashboard
+
+* Total income
+* Total expenses
+* Current balance
+* Total transactions
+* Recent transactions
+* Expense category summary
+
+### Settings
+
+* Display name
+* Currency selection
+* Dark mode
+* Light mode
+* Persistent settings
+
+### Notifications
+
+* Transaction added notification
+* Transaction deleted notification
+* Login notification
+* Logout notification
+* Notification history
+* Notification counter
+
+### User Experience
+
+* Responsive design
+* Mobile-friendly layout
+* Empty states
+* Confirmation modals
+* Interactive buttons
+* Lucide icons
+* Smooth UI interactions
+
+### Data Persistence
+
+All transaction and application settings are stored using the browser's LocalStorage, allowing data to remain available after refreshing the page.
+
+## 🛠️ Tech Stack
+
+* React
 * JavaScript
-* React.js
-* Git & GitHub
+* CSS
+* Vite
+* Lucide React
+* LocalStorage
 
-## 🚧 Project Status
+## 📁 Project Structure
 
-**In Development**
+```text
+src/
+├── components/
+│   ├── CategoryItem.jsx
+│   ├── DeleteModal.jsx
+│   ├── ExpenseCategories.jsx
+│   ├── Login.jsx
+│   ├── RecentTransactions.jsx
+│   ├── Settings.jsx
+│   ├── Sidebar.jsx
+│   ├── SummaryCard.jsx
+│   ├── SummaryCards.jsx
+│   ├── Topbar.jsx
+│   ├── TransactionModal.jsx
+│   ├── TransactionRow.jsx
+│   └── TransactionToolbar.jsx
+│
+├── App.jsx
+├── index.css
+└── main.jsx
+```
 
-New features and improvements are being added regularly.
+## 🚀 Getting Started
 
-## 🎯 Project Goals
+Clone the repository:
 
-This project is being built to practice:
+```bash
+git clone https://github.com/aminrasooli2007-svg/expense-tracker-js.git
+```
 
-* React.js fundamentals
-* Component-based development
-* State management
-* JavaScript problem-solving
-* Building responsive and user-friendly interfaces
+Navigate to the project:
 
-## 🚀 How to Run
+```bash
+cd expense-tracker-js
+```
 
-1. Clone the repository:
+Install dependencies:
 
-   ```bash
-   git clone YOUR_REPOSITORY_URL
-   ```
+```bash
+npm install
+```
 
-2. Install dependencies:
+Start the development server:
 
-   ```bash
-   npm install
-   ```
+```bash
+npm run dev
+```
 
-3. Start the development server:
+Open the local development URL provided by Vite in your browser.
 
-   ```bash
-   npm run dev
-   ```
+## 🔐 Demo Login
+
+The current authentication system is frontend-only and is intended for demonstration purposes.
+
+Password:
+
+```text
+admin00123
+```
+
+## ⚠️ Important Note
+
+ExpenseFlow currently uses LocalStorage for authentication, transactions, settings, and notifications.
+
+This means the authentication system is not suitable for production applications that require real user security.
+
+A future version could connect the application to a backend API and database for real authentication and multi-user data management.
+
+## 📌 Project Status
+
+**Version 1.0 — Completed**
+
+The main functionality and UI of ExpenseFlow have been implemented and tested.
+
+## 🎯 Future Improvements
+
+Possible future improvements include:
+
+* Backend authentication
+* Database integration
+* Multi-user accounts
+* Cloud data synchronization
+* Financial charts
+* Export transactions
+* Recurring transactions
+* Advanced analytics
+* Real-time notifications
 
 ## 👨‍💻 Author
 
 **Amin Rasooli**
 
-[GitHub](https://github.com/aminrasooli2007-svg) · [LinkedIn](https://www.linkedin.com/in/amin-rasooli-8325b4408/)
+Frontend Developer
+
+GitHub:
+https://github.com/aminrasooli2007-svg
+
+## 📄 License
+
+This project was created for learning, portfolio development, and educational purposes.

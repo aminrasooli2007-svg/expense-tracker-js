@@ -1,3 +1,4 @@
+
 import {
   Utensils,
   BriefcaseBusiness,
@@ -15,6 +16,7 @@ function TransactionRow({
   date,
   amount,
   type,
+  currency,
   onDelete,
   onEdit,
 }) {
@@ -30,7 +32,6 @@ function TransactionRow({
 
   return (
     <div className="transaction-row">
-
       <div className="transaction-name">
         <div className="transaction-icon expense">
           <Icon size={18} />
@@ -47,12 +48,14 @@ function TransactionRow({
         {date}
       </span>
 
-      <span className={`transaction-amount ${type}`}>
-        {type === "income" ? "+" : "-"} {amount}
+      <span
+        className={`transaction-amount ${type}`}
+      >
+        {type === "income" ? "+" : "-"}{" "}
+        {amount.toLocaleString()} {currency}
       </span>
 
       <div className="transaction-actions">
-
         <button
           className="edit-button"
           onClick={() => onEdit(id)}
@@ -68,11 +71,10 @@ function TransactionRow({
         >
           <Trash2 size={17} />
         </button>
-
       </div>
-
     </div>
   );
 }
 
 export default TransactionRow;
+

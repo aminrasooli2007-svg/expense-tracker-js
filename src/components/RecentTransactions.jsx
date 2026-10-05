@@ -1,3 +1,4 @@
+
 import TransactionRow from "./TransactionRow";
 import TransactionToolbar from "./TransactionToolbar";
 
@@ -11,10 +12,10 @@ function RecentTransactions({
   setTypeFilter,
   categoryFilter,
   setCategoryFilter,
+  currency,
 }) {
   return (
     <div className="content-card transactions-card">
-
       <div className="card-header">
         <div>
           <h3>Recent Transactions</h3>
@@ -32,12 +33,12 @@ function RecentTransactions({
       />
 
       <div className="transaction-table">
-
         <div className="table-head">
           <span>Transaction</span>
           <span>Category</span>
           <span>Date</span>
           <span>Amount</span>
+          <span>Actions</span>
         </div>
 
         {transactions.length > 0 ? (
@@ -51,8 +52,13 @@ function RecentTransactions({
                 date={item.date}
                 amount={item.amount}
                 type={item.type}
-                onDelete={() => deleteTransaction(item.id)}
-                onEdit={() => editTransaction(item.id)}
+                currency={currency}
+                onDelete={() =>
+                  deleteTransaction(item.id)
+                }
+                onEdit={() =>
+                  editTransaction(item.id)
+                }
               />
             );
           })
@@ -61,10 +67,10 @@ function RecentTransactions({
             No transactions found.
           </div>
         )}
-
       </div>
     </div>
   );
 }
 
 export default RecentTransactions;
+

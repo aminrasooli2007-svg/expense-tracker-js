@@ -1,3 +1,4 @@
+
 import {
   Wallet,
   ArrowDownToLine,
@@ -5,7 +6,12 @@ import {
   List,
 } from "lucide-react";
 
-function SummaryCard({ title, amount, type }) {
+function SummaryCard({
+  title,
+  amount,
+  type,
+  currency,
+}) {
   let Icon = Wallet;
 
   if (type === "income") {
@@ -15,6 +21,7 @@ function SummaryCard({ title, amount, type }) {
   if (type === "expense") {
     Icon = ArrowUpToLine;
   }
+
   if (type === "transaction") {
     Icon = List;
   }
@@ -31,16 +38,15 @@ function SummaryCard({ title, amount, type }) {
         </span>
       </div>
 
-      <h2>{amount.toLocaleString()}
-        {type !== "transaction" && " AFN"}</h2>
+      <h2>
+        {amount.toLocaleString()}
+        {type !== "transaction" && ` ${currency}`}
+      </h2>
 
       <span className="card-description">
         {type === "balance" && "Available balance"}
-
         {type === "income" && "Total money received"}
-
         {type === "expense" && "Total money spent"}
-
         {type === "transaction" && "All transactions"}
       </span>
     </div>
@@ -48,3 +54,4 @@ function SummaryCard({ title, amount, type }) {
 }
 
 export default SummaryCard;
+

@@ -1,4 +1,10 @@
-function CategoryItem({ category, amount, percentage }) {
+
+function CategoryItem({
+  category,
+  amount,
+  percentage,
+  currency,
+}) {
   return (
     <div className="category-item">
       <div className="category-left">
@@ -6,7 +12,10 @@ function CategoryItem({ category, amount, percentage }) {
 
         <div>
           <strong>{category}</strong>
-          <span>{amount.toLocaleString()} AFN</span>
+
+          <span>
+            {amount.toLocaleString()} {currency}
+          </span>
         </div>
       </div>
 
@@ -18,3 +27,4 @@ function CategoryItem({ category, amount, percentage }) {
 }
 
 export default CategoryItem;
+

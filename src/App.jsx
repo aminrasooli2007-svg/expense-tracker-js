@@ -11,7 +11,32 @@ import TransactionModal from "./components/TransactionModal";
 import DeleteModal from "./components/DeleteModal";
 import Settings from "./components/Settings";
 
-const initialTransactions = [];
+const initialTransactions = [
+  {
+    id: 1,
+    title: "Restaurant",
+    category: "Food",
+    date: "2026-09-30",
+    amount: 450,
+    type: "expense",
+  },
+  {
+    id: 2,
+    title: "Freelance Work",
+    category: "Work",
+    date: "2026-09-29",
+    amount: 5000,
+    type: "income",
+  },
+  {
+    id: 3,
+    title: "Internet",
+    category: "Technology",
+    date: "2026-10-03",
+    amount: 800,
+    type: "expense",
+  },
+];
 
 function App() {
   const [user, setUser] = useState(() => {
@@ -39,32 +64,60 @@ function App() {
   const [notification, setNotification] =
     useState(null);
 
+  const [
+    notifications,
+    setNotifications,
+  ] = useState(() => {
+    const savedNotifications =
+      localStorage.getItem("notifications");
+
+    if (savedNotifications) {
+      return JSON.parse(savedNotifications);
+    }
+
+    return [];
+  });
+
+  const [
+    isNotificationOpen,
+    setIsNotificationOpen,
+  ] = useState(false);
+
   const [activePage, setActivePage] =
     useState("dashboard");
 
   const [search, setSearch] = useState("");
-  const [typeFilter, setTypeFilter] = useState("all");
+  const [typeFilter, setTypeFilter] =
+    useState("all");
   const [categoryFilter, setCategoryFilter] =
     useState("all");
 
   const [isModalOpen, setIsModalOpen] =
     useState(false);
 
-  const [editingTransaction, setEditingTransaction] =
-    useState(null);
+  const [
+    editingTransaction,
+    setEditingTransaction,
+  ] = useState(null);
 
-  const [isDeleteModalOpen, setIsDeleteModalOpen] =
-    useState(false);
+  const [
+    isDeleteModalOpen,
+    setIsDeleteModalOpen,
+  ] = useState(false);
 
-  const [deletingTransaction, setDeletingTransaction] =
-    useState(null);
+  const [
+    deletingTransaction,
+    setDeletingTransaction,
+  ] = useState(null);
 
   const [formData, setFormData] = useState({
     title: "",
     amount: "",
     type: "expense",
     category: "Food",
-    date: new Date().toISOString().split("T")[0],
+    date: new Date()
+      .toISOString()
+      .split("T")[0],
   });
 
   const [settings, setSettings] = useState(() => {
@@ -120,6 +173,13 @@ function App() {
   }, [settings]);
 
   useEffect(() => {
+    localStorage.setItem(
+      "notifications",
+      JSON.stringify(notifications)
+    );
+  }, [notifications]);
+
+  useEffect(() => {
     document.body.classList.toggle(
       "light-theme",
       settings.theme === "light"
@@ -140,12 +200,27 @@ function App() {
     };
   }, [notification]);
 
-  const showNotification = (message, type = "success") => {
-    setNotification({
+  const showNotification = (
+    message,
+    type = "success"
+  ) => {
+    const newNotification = {
+      id: Date.now(),
       message,
       type,
-      id: Date.now(),
-    });
+      time: new Date().toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+      read: false,
+    };
+
+    setNotification(newNotification);
+
+    setNotifications((currentNotifications) => [
+      newNotification,
+      ...currentNotifications,
+    ]);
   };
 
   const handleLogin = (newUser) => {
@@ -184,6 +259,8 @@ function App() {
     setSearch("");
     setTypeFilter("all");
     setCategoryFilter("all");
+
+    setIsNotificationOpen(false);
   };
 
   const openAddModal = () => {
@@ -194,16 +271,18 @@ function App() {
       amount: "",
       type: "expense",
       category: "Food",
-      date: new Date().toISOString().split("T")[0],
+      date: new Date()
+        .toISOString()
+        .split("T")[0],
     });
 
     setIsModalOpen(true);
   };
 
   const openEditModal = (id) => {
-    const transaction = transactions.find((item) => {
-      return item.id === id;
-    });
+    const transaction = transactions.find(
+      (item) => item.id === id
+    );
 
     if (!transaction) {
       return;
@@ -280,9 +359,9 @@ function App() {
   };
 
   const openDeleteModal = (id) => {
-    const transaction = transactions.find((item) => {
-      return item.id === id;
-    });
+    const transaction = transactions.find(
+      (item) => item.id === id
+    );
 
     if (!transaction) {
       return;
@@ -321,6 +400,11 @@ function App() {
   const closeDeleteModal = () => {
     setIsDeleteModalOpen(false);
     setDeletingTransaction(null);
+  };
+
+  const clearNotifications = () => {
+    setNotifications([]);
+    setIsNotificationOpen(false);
   };
 
   const filteredTransactions =
@@ -368,7 +452,8 @@ function App() {
     0
   );
 
-  const balance = totalIncome - totalExpenses;
+  const balance =
+    totalIncome - totalExpenses;
 
   const totalTransactions =
     transactions.length;
@@ -395,13 +480,25 @@ function App() {
             <Topbar
               onAdd={openAddModal}
               name={settings.name}
+              notifications={notifications}
+              isNotificationOpen={
+                isNotificationOpen
+              }
+              setIsNotificationOpen={
+                setIsNotificationOpen
+              }
+              onClearNotifications={
+                clearNotifications
+              }
             />
 
             {activePage === "dashboard" && (
               <>
                 <SummaryCards
                   totalIncome={totalIncome}
-                  totalExpenses={totalExpenses}
+                  totalExpenses={
+                    totalExpenses
+                  }
                   balance={balance}
                   totalTransactions={
                     totalTransactions
@@ -432,7 +529,9 @@ function App() {
                     setCategoryFilter={
                       setCategoryFilter
                     }
-                    currency={settings.currency}
+                    currency={
+                      settings.currency
+                    }
                   />
 
                   <div className="right-column">
@@ -475,7 +574,9 @@ function App() {
                 setCategoryFilter={
                   setCategoryFilter
                 }
-                currency={settings.currency}
+                currency={
+                  settings.currency
+                }
               />
             )}
 
@@ -485,7 +586,9 @@ function App() {
                 totalExpenses={
                   totalExpenses
                 }
-                currency={settings.currency}
+                currency={
+                  settings.currency
+                }
               />
             )}
 

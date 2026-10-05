@@ -1,4 +1,3 @@
-
 @import "tailwindcss";
 
 * {
@@ -239,6 +238,7 @@ a {
 .icon-button {
   width: 40px;
   height: 40px;
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1113,6 +1113,248 @@ body.light-theme .transaction-row {
   opacity: 0.9;
 }
 
+.logout-button {
+  width: 32px;
+  height: 32px;
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-secondary);
+  transition: 0.2s ease;
+}
+
+.logout-button:hover {
+  background: var(--expense-soft);
+  color: var(--expense);
+}
+
+.login-error {
+  margin-top: -6px;
+  color: var(--expense);
+  font-size: 12px;
+  text-align: center;
+}
+
+.notification-wrapper {
+  position: relative;
+}
+
+.notification-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: var(--expense);
+  color: #ffffff;
+  font-size: 9px;
+  font-weight: 700;
+  border: 2px solid var(--card);
+  line-height: 1;
+}
+
+.notification-panel {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  width: 370px;
+  max-height: 520px;
+  overflow: hidden;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.35),
+    0 0 0 1px rgba(255, 255, 255, 0.02);
+  z-index: 2000;
+}
+
+.notification-panel-header {
+  min-height: 68px;
+  padding: 15px 16px 14px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+}
+
+.notification-panel-header h3 {
+  margin: 0;
+  color: var(--text);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.notification-panel-header p {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.notification-panel-actions {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.notification-panel-actions button {
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.notification-panel-actions button:hover {
+  color: var(--text);
+}
+
+.notification-panel-actions button:first-child {
+  padding: 6px 8px;
+  border-radius: 7px;
+  font-size: 11px;
+}
+
+.notification-panel-actions button:first-child:hover {
+  background: var(--card-hover);
+}
+
+.notification-close {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+}
+
+.notification-close:hover {
+  background: var(--card-hover);
+}
+
+.notification-list {
+  max-height: 440px;
+  overflow-y: auto;
+  background: var(--card);
+}
+
+.notification-list::-webkit-scrollbar {
+  width: 5px;
+}
+
+.notification-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.notification-list::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 10px;
+}
+
+.notification-item {
+  padding: 14px 18px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.notification-item:hover {
+  background: var(--card-hover);
+}
+
+.notification-item:last-child {
+  border-bottom: none;
+}
+
+.notification-item.unread {
+  background: var(--primary-soft);
+}
+
+.notification-item.unread:hover {
+  background: var(--card-hover);
+}
+
+.notification-item-icon {
+  width: 35px;
+  height: 35px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: var(--primary-soft);
+  color: var(--primary);
+}
+
+.notification-item-content {
+  min-width: 0;
+  padding-top: 1px;
+}
+
+.notification-item-content p {
+  margin: 0;
+  color: var(--text);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.notification-item-content span {
+  display: block;
+  margin-top: 5px;
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.notification-empty {
+  min-height: 250px;
+  padding: 45px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 7px;
+  background: var(--card);
+}
+
+.notification-empty-icon {
+  width: 48px;
+  height: 48px;
+  margin-bottom: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--primary-soft);
+  color: var(--primary);
+}
+
+.notification-empty strong {
+  color: var(--text);
+  font-size: 14px;
+}
+
+.notification-empty span {
+  color: var(--muted);
+  font-size: 11px;
+}
+
 @media (max-width: 1100px) {
   .dashboard-grid {
     grid-template-columns: 1fr;
@@ -1154,6 +1396,10 @@ body.light-theme .transaction-row {
     justify-content: center;
   }
 
+  .logout-button {
+    margin-left: 0;
+  }
+
   .main {
     width: calc(100% - 75px);
     margin-left: 75px;
@@ -1169,30 +1415,6 @@ body.light-theme .transaction-row {
       minmax(100px, 1fr)
       72px;
   }
-}
-.logout-button {
-  width: 32px;
-  height: 32px;
-  margin-left: auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  border-radius: 8px;
-  background: transparent;
-  color: var(--text-secondary);
-  transition: 0.2s ease;
-}
-
-.logout-button:hover {
-  background: var(--expense-soft);
-  color: var(--expense);
-}
-.login-error {
-  margin-top: -6px;
-  color: var(--expense);
-  font-size: 12px;
-  text-align: center;
 }
 
 @media (max-width: 700px) {
@@ -1248,6 +1470,20 @@ body.light-theme .transaction-row {
 }
 
 @media (max-width: 600px) {
+  .notification-panel {
+    position: fixed;
+    top: 70px;
+    left: 15px;
+    right: 15px;
+    width: auto;
+    max-height: calc(100vh - 90px);
+    border-radius: 16px;
+  }
+
+  .notification-list {
+    max-height: calc(100vh - 160px);
+  }
+
   .settings-card {
     padding: 20px;
   }
@@ -1327,4 +1563,3 @@ body.light-theme .transaction-row {
     padding: 15px;
   }
 }
-

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import Sidebar from "./components/Sidebar";
 import Topbar from "./components/Topbar";
@@ -7,19 +7,62 @@ import RecentTransactions from "./components/RecentTransactions";
 import ExpenseCategories from "./components/ExpenseCategories";
 import TransactionModal from "./components/TransactionModal";
 import DeleteModal from "./components/DeleteModal";
-function App() {
 
-  const [transactions, setTransactions] = useState([]);
+const initialTransactions = [
+  {
+    id: 1,
+    title: "Restaurant",
+    category: "Food",
+    date: "2026-09-30",
+    amount: 450,
+    type: "expense",
+  },
+  {
+    id: 2,
+    title: "Freelance Work",
+    category: "Work",
+    date: "2026-09-29",
+    amount: 5000,
+    type: "income",
+  },
+  {
+    id: 3,
+    title: "Internet",
+    category: "Technology",
+    date: "2026-10-03",
+    amount: 800,
+    type: "expense",
+  },
+];
+
+function App() {
+  const [transactions, setTransactions] = useState(() => {
+    const savedTransactions =
+      localStorage.getItem("transactions");
+
+    if (savedTransactions) {
+      return JSON.parse(savedTransactions);
+    }
+
+    return initialTransactions;
+  });
 
   const [activePage, setActivePage] = useState("dashboard");
 
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState("all");
   const [categoryFilter, setCategoryFilter] = useState("all");
+
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingTransaction, setEditingTransaction] = useState(null);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [deletingTransaction, setDeletingTransaction] = useState(null);
+
+  const [editingTransaction, setEditingTransaction] =
+    useState(null);
+
+  const [isDeleteModalOpen, setIsDeleteModalOpen] =
+    useState(false);
+
+  const [deletingTransaction, setDeletingTransaction] =
+    useState(null);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -28,6 +71,13 @@ function App() {
     category: "Food",
     date: new Date().toISOString().split("T")[0],
   });
+
+  useEffect(() => {
+    localStorage.setItem(
+      "transactions",
+      JSON.stringify(transactions)
+    );
+  }, [transactions]);
 
   const openAddModal = () => {
     setEditingTransaction(null);
@@ -65,13 +115,10 @@ function App() {
     setIsModalOpen(true);
   };
 
-
   const closeModal = () => {
     setIsModalOpen(false);
-
     setEditingTransaction(null);
   };
-
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -87,7 +134,9 @@ function App() {
     if (editingTransaction) {
       setTransactions(
         transactions.map((transaction) => {
-          if (transaction.id === editingTransaction.id) {
+          if (
+            transaction.id === editingTransaction.id
+          ) {
             return {
               ...transaction,
               ...transactionData,
@@ -97,9 +146,7 @@ function App() {
           return transaction;
         })
       );
-    }
-
-    else {
+    } else {
       const newTransaction = {
         id: Date.now(),
         ...transactionData,
@@ -114,7 +161,6 @@ function App() {
     closeModal();
   };
 
-
   const openDeleteModal = (id) => {
     const transaction = transactions.find((item) => {
       return item.id === id;
@@ -125,7 +171,6 @@ function App() {
     }
 
     setDeletingTransaction(transaction);
-
     setIsDeleteModalOpen(true);
   };
 
@@ -136,39 +181,42 @@ function App() {
 
     setTransactions(
       transactions.filter((transaction) => {
-        return transaction.id !== deletingTransaction.id;
+        return (
+          transaction.id !== deletingTransaction.id
+        );
       })
     );
 
     setIsDeleteModalOpen(false);
-
     setDeletingTransaction(null);
   };
 
   const closeDeleteModal = () => {
     setIsDeleteModalOpen(false);
-
     setDeletingTransaction(null);
   };
-  const filteredTransactions = transactions.filter((transaction) => {
-    const matchesSearch = transaction.title
-      .toLowerCase()
-      .includes(search.toLowerCase());
 
-    const matchesType =
-      typeFilter === "all" ||
-      transaction.type === typeFilter;
+  const filteredTransactions = transactions.filter(
+    (transaction) => {
+      const matchesSearch = transaction.title
+        .toLowerCase()
+        .includes(search.toLowerCase());
 
-    const matchesCategory =
-      categoryFilter === "all" ||
-      transaction.category === categoryFilter;
+      const matchesType =
+        typeFilter === "all" ||
+        transaction.type === typeFilter;
 
-    return (
-      matchesSearch &&
-      matchesType &&
-      matchesCategory
-    );
-  });
+      const matchesCategory =
+        categoryFilter === "all" ||
+        transaction.category === categoryFilter;
+
+      return (
+        matchesSearch &&
+        matchesType &&
+        matchesCategory
+      );
+    }
+  );
 
   const totalIncome = transactions.reduce(
     (total, transaction) => {
@@ -193,6 +241,7 @@ function App() {
   );
 
   const balance = totalIncome - totalExpenses;
+
   const totalTransactions = transactions.length;
 
   return (
@@ -205,9 +254,7 @@ function App() {
 
       <main className="main">
 
-        <Topbar
-          onAdd={openAddModal}
-        />
+        <Topbar onAdd={openAddModal} />
 
         {activePage === "dashboard" && (
           <>
@@ -224,48 +271,42 @@ function App() {
                 transactions={filteredTransactions}
                 deleteTransaction={openDeleteModal}
                 editTransaction={openEditModal}
-
                 search={search}
                 setSearch={setSearch}
-
                 typeFilter={typeFilter}
                 setTypeFilter={setTypeFilter}
-
                 categoryFilter={categoryFilter}
-                setCategoryFilter={setCategoryFilter}
+                setCategoryFilter={
+                  setCategoryFilter
+                }
               />
 
               <div className="right-column">
-
                 <ExpenseCategories
                   transactions={transactions}
                   totalExpenses={totalExpenses}
                 />
-
               </div>
 
             </section>
           </>
         )}
 
-
         {activePage === "transactions" && (
           <RecentTransactions
             transactions={filteredTransactions}
             deleteTransaction={openDeleteModal}
             editTransaction={openEditModal}
-
             search={search}
             setSearch={setSearch}
-
             typeFilter={typeFilter}
             setTypeFilter={setTypeFilter}
-
             categoryFilter={categoryFilter}
-            setCategoryFilter={setCategoryFilter}
+            setCategoryFilter={
+              setCategoryFilter
+            }
           />
         )}
-
 
         {activePage === "categories" && (
           <ExpenseCategories
@@ -273,6 +314,7 @@ function App() {
             totalExpenses={totalExpenses}
           />
         )}
+
         {activePage === "settings" && (
           <div className="content-card">
 
@@ -295,6 +337,7 @@ function App() {
         onSubmit={handleSubmit}
         isEditing={Boolean(editingTransaction)}
       />
+
       <DeleteModal
         isOpen={isDeleteModalOpen}
         onClose={closeDeleteModal}

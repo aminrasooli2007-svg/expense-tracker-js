@@ -1,5 +1,5 @@
 # ExpenseFlow
-![Expense Tracker Screenshot](screenshots/Exp.png)
+![Expense Tracker Screenshot](Exp.png)
 A modern, responsive, and feature-rich personal expense management application built with React.
 
 ExpenseFlow helps users track income and expenses, organize transactions, monitor their financial balance, and manage their personal financial activity through a clean and intuitive interface.

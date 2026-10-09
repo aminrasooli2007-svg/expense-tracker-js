@@ -1,4 +1,6 @@
+
 import { useEffect, useState } from "react";
+import { supabase } from "./lib/supabase";
 
 import Login from "./components/Login";
 import Notification from "./components/Notification";
@@ -11,165 +13,220 @@ import TransactionModal from "./components/TransactionModal";
 import DeleteModal from "./components/DeleteModal";
 import Settings from "./components/Settings";
 
-const initialTransactions = [
-  {
-    id: 1,
-    title: "Restaurant",
-    category: "Food",
-    date: "2026-09-30",
-    amount: 450,
-    type: "expense",
-  },
-  {
-    id: 2,
-    title: "Freelance Work",
-    category: "Work",
-    date: "2026-09-29",
-    amount: 5000,
-    type: "income",
-  },
-  {
-    id: 3,
-    title: "Internet",
-    category: "Technology",
-    date: "2026-10-03",
-    amount: 800,
-    type: "expense",
-  },
-];
+function getUserFromSession(authUser) {
+  if (!authUser) {
+    return null;
+  }
+
+  const metadata = authUser.user_metadata || {};
+  const firstName = metadata.first_name || "";
+  const lastName = metadata.last_name || "";
+
+  return {
+    id: authUser.id,
+    email: authUser.email,
+    firstName,
+    lastName,
+    name:
+      metadata.full_name ||
+      `${firstName} ${lastName}`.trim() ||
+      authUser.email,
+  };
+}
+
+function mapTransaction(transaction) {
+  return {
+    ...transaction,
+    amount: Number(transaction.amount),
+  };
+}
 
 function App() {
-  const [user, setUser] = useState(() => {
-    const savedUser =
-      localStorage.getItem("user");
+  const [user, setUser] = useState(null);
+  const [authLoading, setAuthLoading] = useState(true);
+  const [transactions, setTransactions] = useState([]);
+  const [transactionsLoading, setTransactionsLoading] = useState(false);
 
-    if (savedUser) {
-      return JSON.parse(savedUser);
-    }
-
-    return null;
-  });
-
-  const [transactions, setTransactions] = useState(() => {
-    const savedTransactions =
-      localStorage.getItem("transactions");
-
-    if (savedTransactions) {
-      return JSON.parse(savedTransactions);
-    }
-
-    return initialTransactions;
-  });
-
-  const [notification, setNotification] =
-    useState(null);
-
-  const [
-    notifications,
-    setNotifications,
-  ] = useState(() => {
-    const savedNotifications =
-      localStorage.getItem("notifications");
+  const [notification, setNotification] = useState(null);
+  const [notifications, setNotifications] = useState(() => {
+    const savedNotifications = localStorage.getItem("notifications");
 
     if (savedNotifications) {
-      return JSON.parse(savedNotifications);
+      try {
+        return JSON.parse(savedNotifications);
+      } catch {
+        return [];
+      }
     }
 
     return [];
   });
 
-  const [
-    isNotificationOpen,
-    setIsNotificationOpen,
-  ] = useState(false);
-
-  const [activePage, setActivePage] =
-    useState("dashboard");
-
+  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+  const [activePage, setActivePage] = useState("dashboard");
   const [search, setSearch] = useState("");
-  const [typeFilter, setTypeFilter] =
-    useState("all");
-  const [categoryFilter, setCategoryFilter] =
-    useState("all");
-
-  const [isModalOpen, setIsModalOpen] =
-    useState(false);
-
-  const [
-    editingTransaction,
-    setEditingTransaction,
-  ] = useState(null);
-
-  const [
-    isDeleteModalOpen,
-    setIsDeleteModalOpen,
-  ] = useState(false);
-
-  const [
-    deletingTransaction,
-    setDeletingTransaction,
-  ] = useState(null);
+  const [typeFilter, setTypeFilter] = useState("all");
+  const [categoryFilter, setCategoryFilter] = useState("all");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingTransaction, setEditingTransaction] = useState(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [deletingTransaction, setDeletingTransaction] = useState(null);
+  const [isSavingTransaction, setIsSavingTransaction] = useState(false);
+  const [isDeletingTransaction, setIsDeletingTransaction] = useState(false);
 
   const [formData, setFormData] = useState({
     title: "",
     amount: "",
     type: "expense",
     category: "Food",
-    date: new Date()
-      .toISOString()
-      .split("T")[0],
+    date: new Date().toISOString().split("T")[0],
   });
 
   const [settings, setSettings] = useState(() => {
-    const savedSettings =
-      localStorage.getItem("settings");
-
     const defaultSettings = {
       name: "",
       currency: "AFN",
       theme: "dark",
     };
 
+    const savedSettings = localStorage.getItem("settings");
+
     if (savedSettings) {
-      return {
-        ...defaultSettings,
-        ...JSON.parse(savedSettings),
-      };
+      try {
+        return {
+          ...defaultSettings,
+          ...JSON.parse(savedSettings),
+        };
+      } catch {
+        return defaultSettings;
+      }
     }
 
     return defaultSettings;
   });
 
-  useEffect(() => {
-    if (user) {
-      localStorage.setItem(
-        "user",
-        JSON.stringify(user)
-      );
-    }
-  }, [user]);
+  const showNotification = (message, type = "success") => {
+    const newNotification = {
+      id: `${Date.now()}-${Math.random()}`,
+      message,
+      type,
+      time: new Date().toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+      read: false,
+    };
+
+    setNotification(newNotification);
+    setNotifications((currentNotifications) => [
+      newNotification,
+      ...currentNotifications,
+    ]);
+  };
 
   useEffect(() => {
-    if (user) {
+    let active = true;
+
+    const applySession = (session) => {
+      if (!active) {
+        return;
+      }
+
+      setUser(getUserFromSession(session?.user));
+      setAuthLoading(false);
+    };
+
+    supabase.auth.getSession().then(({ data, error }) => {
+      if (!active) {
+        return;
+      }
+
+      if (error) {
+        setUser(null);
+        setAuthLoading(false);
+        showNotification(
+          "Unable to restore your session. Please log in again.",
+          "error"
+        );
+        return;
+      }
+
+      applySession(data.session);
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      applySession(session);
+    });
+
+    return () => {
+      active = false;
+      subscription.unsubscribe();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!user) {
+      setTransactions([]);
       setSettings((currentSettings) => ({
         ...currentSettings,
-        name: user.name,
+        name: "",
       }));
+      return;
     }
+
+    setSettings((currentSettings) => ({
+      ...currentSettings,
+      name: user.name,
+    }));
   }, [user]);
 
   useEffect(() => {
-    localStorage.setItem(
-      "transactions",
-      JSON.stringify(transactions)
-    );
-  }, [transactions]);
+    if (!user?.id) {
+      setTransactions([]);
+      setTransactionsLoading(false);
+      return;
+    }
+
+    let active = true;
+
+    const loadTransactions = async () => {
+      setTransactionsLoading(true);
+
+      const { data, error } = await supabase
+        .from("transactions")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("date", { ascending: false })
+        .order("created_at", { ascending: false });
+
+      if (!active) {
+        return;
+      }
+
+      if (error) {
+        setTransactions([]);
+        showNotification(
+          `Could not load transactions: ${error.message}`,
+          "error"
+        );
+      } else {
+        setTransactions((data || []).map(mapTransaction));
+      }
+
+      setTransactionsLoading(false);
+    };
+
+    loadTransactions();
+
+    return () => {
+      active = false;
+    };
+  }, [user?.id]);
 
   useEffect(() => {
-    localStorage.setItem(
-      "settings",
-      JSON.stringify(settings)
-    );
+    localStorage.setItem("settings", JSON.stringify(settings));
   }, [settings]);
 
   useEffect(() => {
@@ -184,6 +241,10 @@ function App() {
       "light-theme",
       settings.theme === "light"
     );
+
+    return () => {
+      document.body.classList.remove("light-theme");
+    };
   }, [settings.theme]);
 
   useEffect(() => {
@@ -200,43 +261,13 @@ function App() {
     };
   }, [notification]);
 
-  const showNotification = (
-    message,
-    type = "success"
-  ) => {
-    const newNotification = {
-      id: Date.now(),
-      message,
-      type,
-      time: new Date().toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
-      read: false,
-    };
-
-    setNotification(newNotification);
-
-    setNotifications((currentNotifications) => [
-      newNotification,
-      ...currentNotifications,
-    ]);
-  };
-
   const handleLogin = (newUser) => {
     setUser(newUser);
-
-    localStorage.setItem(
-      "user",
-      JSON.stringify(newUser)
-    );
-
-    setSettings((currentSettings) => ({
-      ...currentSettings,
-      name: newUser.name,
-    }));
-
     setActivePage("dashboard");
+
+    setSearch("");
+    setTypeFilter("all");
+    setCategoryFilter("all");
 
     showNotification(
       `Welcome ${newUser.name}! You are logged in.`,
@@ -244,23 +275,36 @@ function App() {
     );
   };
 
-  const handleLogout = () => {
-    showNotification(
-      `Goodbye ${settings.name}! You have been logged out.`,
-      "logout"
-    );
+  const handleLogout = async () => {
+    const loggedOutName = user?.name || settings.name;
 
-    localStorage.removeItem("user");
+    const { error } = await supabase.auth.signOut();
+
+    if (error) {
+      showNotification(
+        `Could not log out: ${error.message}`,
+        "error"
+      );
+      return;
+    }
 
     setUser(null);
-
+    setTransactions([]);
     setActivePage("dashboard");
-
     setSearch("");
     setTypeFilter("all");
     setCategoryFilter("all");
-
     setIsNotificationOpen(false);
+    setNotifications([]);
+    setSettings((currentSettings) => ({
+      ...currentSettings,
+      name: "",
+    }));
+
+    showNotification(
+      `Goodbye ${loggedOutName}! You have been logged out.`,
+      "logout"
+    );
   };
 
   const openAddModal = () => {
@@ -271,9 +315,7 @@ function App() {
       amount: "",
       type: "expense",
       category: "Food",
-      date: new Date()
-        .toISOString()
-        .split("T")[0],
+      date: new Date().toISOString().split("T")[0],
     });
 
     setIsModalOpen(true);
@@ -302,60 +344,107 @@ function App() {
   };
 
   const closeModal = () => {
+    if (isSavingTransaction) {
+      return;
+    }
+
     setIsModalOpen(false);
     setEditingTransaction(null);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!user?.id || isSavingTransaction) {
+      return;
+    }
+
+    const amount = Number(formData.amount);
+
+    if (
+      !formData.title.trim() ||
+      !formData.date ||
+      !Number.isFinite(amount) ||
+      amount < 0
+    ) {
+      showNotification(
+        "Please enter a valid title, date, and amount.",
+        "error"
+      );
+      return;
+    }
+
     const transactionData = {
-      title: formData.title,
-      amount: Number(formData.amount),
+      title: formData.title.trim(),
+      amount,
       type: formData.type,
       category: formData.category,
       date: formData.date,
     };
 
-    if (editingTransaction) {
-      setTransactions(
-        transactions.map((transaction) => {
-          if (
-            transaction.id ===
-            editingTransaction.id
-          ) {
-            return {
-              ...transaction,
-              ...transactionData,
-            };
-          }
+    setIsSavingTransaction(true);
 
-          return transaction;
-        })
-      );
+    try {
+      if (editingTransaction) {
+        const { data, error } = await supabase
+          .from("transactions")
+          .update(transactionData)
+          .eq("id", editingTransaction.id)
+          .eq("user_id", user.id)
+          .select()
+          .single();
 
+        if (error) {
+          throw error;
+        }
+
+        setTransactions((currentTransactions) =>
+          currentTransactions.map((transaction) =>
+            transaction.id === data.id
+              ? mapTransaction(data)
+              : transaction
+          )
+        );
+
+        showNotification(
+          `"${transactionData.title}" was updated successfully.`,
+          "edit"
+        );
+      } else {
+        const { data, error } = await supabase
+          .from("transactions")
+          .insert({
+            ...transactionData,
+            user_id: user.id,
+          })
+          .select()
+          .single();
+
+        if (error) {
+          throw error;
+        }
+
+        setTransactions((currentTransactions) => [
+          mapTransaction(data),
+          ...currentTransactions,
+        ]);
+
+        showNotification(
+          `"${transactionData.title}" was added successfully.`,
+          "success"
+        );
+      }
+
+      setIsModalOpen(false);
+      setEditingTransaction(null);
+    } catch (error) {
       showNotification(
-        `"${transactionData.title}" was updated successfully.`,
-        "edit"
+        `Could not save transaction: ${error.message}`,
+        "error"
       );
-    } else {
-      const newTransaction = {
-        id: Date.now(),
-        ...transactionData,
-      };
-
-      setTransactions([
-        newTransaction,
-        ...transactions,
-      ]);
-
-      showNotification(
-        `"${transactionData.title}" was added successfully.`,
-        "success"
-      );
+    } finally {
+      setIsSavingTransaction(false);
     }
-
-    closeModal();
   };
 
   const openDeleteModal = (id) => {
@@ -371,33 +460,59 @@ function App() {
     setIsDeleteModalOpen(true);
   };
 
-  const deleteTransaction = () => {
-    if (!deletingTransaction) {
+  const deleteTransaction = async () => {
+    if (
+      !deletingTransaction ||
+      !user?.id ||
+      isDeletingTransaction
+    ) {
       return;
     }
 
-    const deletedTitle =
-      deletingTransaction.title;
+    setIsDeletingTransaction(true);
 
-    setTransactions(
-      transactions.filter((transaction) => {
-        return (
-          transaction.id !==
-          deletingTransaction.id
-        );
-      })
-    );
+    const transactionToDelete = deletingTransaction;
 
-    setIsDeleteModalOpen(false);
-    setDeletingTransaction(null);
+    try {
+      const { error } = await supabase
+        .from("transactions")
+        .delete()
+        .eq("id", transactionToDelete.id)
+        .eq("user_id", user.id);
 
-    showNotification(
-      `"${deletedTitle}" was deleted successfully.`,
-      "delete"
-    );
+      if (error) {
+        throw error;
+      }
+
+      setTransactions((currentTransactions) =>
+        currentTransactions.filter(
+          (transaction) =>
+            transaction.id !== transactionToDelete.id
+        )
+      );
+
+      setIsDeleteModalOpen(false);
+      setDeletingTransaction(null);
+
+      showNotification(
+        `"${transactionToDelete.title}" was deleted successfully.`,
+        "delete"
+      );
+    } catch (error) {
+      showNotification(
+        `Could not delete transaction: ${error.message}`,
+        "error"
+      );
+    } finally {
+      setIsDeletingTransaction(false);
+    }
   };
 
   const closeDeleteModal = () => {
+    if (isDeletingTransaction) {
+      return;
+    }
+
     setIsDeleteModalOpen(false);
     setDeletingTransaction(null);
   };
@@ -407,12 +522,11 @@ function App() {
     setIsNotificationOpen(false);
   };
 
-  const filteredTransactions =
-    transactions.filter((transaction) => {
-      const matchesSearch =
-        transaction.title
-          .toLowerCase()
-          .includes(search.toLowerCase());
+  const filteredTransactions = transactions.filter(
+    (transaction) => {
+      const matchesSearch = transaction.title
+        .toLowerCase()
+        .includes(search.toLowerCase());
 
       const matchesType =
         typeFilter === "all" ||
@@ -420,15 +534,15 @@ function App() {
 
       const matchesCategory =
         categoryFilter === "all" ||
-        transaction.category ===
-          categoryFilter;
+        transaction.category === categoryFilter;
 
       return (
         matchesSearch &&
         matchesType &&
         matchesCategory
       );
-    });
+    }
+  );
 
   const totalIncome = transactions.reduce(
     (total, transaction) => {
@@ -452,11 +566,27 @@ function App() {
     0
   );
 
-  const balance =
-    totalIncome - totalExpenses;
+  const balance = totalIncome - totalExpenses;
+  const totalTransactions = transactions.length;
 
-  const totalTransactions =
-    transactions.length;
+  if (authLoading) {
+    return (
+      <div className="login-page">
+        <div className="login-card">
+          <div className="login-logo">
+            <div className="login-logo-icon">
+              <span>...</span>
+            </div>
+            <span>ExpenseFlow</span>
+          </div>
+          <div className="login-header">
+            <h1>Loading your account</h1>
+            <p>Please wait a moment.</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -481,70 +611,44 @@ function App() {
               onAdd={openAddModal}
               name={settings.name}
               notifications={notifications}
-              isNotificationOpen={
-                isNotificationOpen
-              }
-              setIsNotificationOpen={
-                setIsNotificationOpen
-              }
-              onClearNotifications={
-                clearNotifications
-              }
+              isNotificationOpen={isNotificationOpen}
+              setIsNotificationOpen={setIsNotificationOpen}
+              onClearNotifications={clearNotifications}
             />
+
+            {transactionsLoading && (
+              <p role="status">Loading transactions...</p>
+            )}
 
             {activePage === "dashboard" && (
               <>
                 <SummaryCards
                   totalIncome={totalIncome}
-                  totalExpenses={
-                    totalExpenses
-                  }
+                  totalExpenses={totalExpenses}
                   balance={balance}
-                  totalTransactions={
-                    totalTransactions
-                  }
+                  totalTransactions={totalTransactions}
                   currency={settings.currency}
                 />
 
                 <section className="dashboard-grid">
                   <RecentTransactions
-                    transactions={
-                      filteredTransactions
-                    }
-                    deleteTransaction={
-                      openDeleteModal
-                    }
-                    editTransaction={
-                      openEditModal
-                    }
+                    transactions={filteredTransactions}
+                    deleteTransaction={openDeleteModal}
+                    editTransaction={openEditModal}
                     search={search}
                     setSearch={setSearch}
                     typeFilter={typeFilter}
-                    setTypeFilter={
-                      setTypeFilter
-                    }
-                    categoryFilter={
-                      categoryFilter
-                    }
-                    setCategoryFilter={
-                      setCategoryFilter
-                    }
-                    currency={
-                      settings.currency
-                    }
+                    setTypeFilter={setTypeFilter}
+                    categoryFilter={categoryFilter}
+                    setCategoryFilter={setCategoryFilter}
+                    currency={settings.currency}
                   />
 
                   <div className="right-column">
                     <ExpenseCategories
-                      transactions={
-                        transactions
-                      }
-                      totalExpenses={
-                        totalExpenses
-                      }
-                      currency={
-                        settings.currency
-                      }
+                      transactions={transactions}
+                      totalExpenses={totalExpenses}
+                      currency={settings.currency}
                     />
                   </div>
                 </section>
@@ -553,42 +657,24 @@ function App() {
 
             {activePage === "transactions" && (
               <RecentTransactions
-                transactions={
-                  filteredTransactions
-                }
-                deleteTransaction={
-                  openDeleteModal
-                }
-                editTransaction={
-                  openEditModal
-                }
+                transactions={filteredTransactions}
+                deleteTransaction={openDeleteModal}
+                editTransaction={openEditModal}
                 search={search}
                 setSearch={setSearch}
                 typeFilter={typeFilter}
-                setTypeFilter={
-                  setTypeFilter
-                }
-                categoryFilter={
-                  categoryFilter
-                }
-                setCategoryFilter={
-                  setCategoryFilter
-                }
-                currency={
-                  settings.currency
-                }
+                setTypeFilter={setTypeFilter}
+                categoryFilter={categoryFilter}
+                setCategoryFilter={setCategoryFilter}
+                currency={settings.currency}
               />
             )}
 
             {activePage === "categories" && (
               <ExpenseCategories
                 transactions={transactions}
-                totalExpenses={
-                  totalExpenses
-                }
-                currency={
-                  settings.currency
-                }
+                totalExpenses={totalExpenses}
+                currency={settings.currency}
               />
             )}
 
@@ -606,18 +692,14 @@ function App() {
             formData={formData}
             setFormData={setFormData}
             onSubmit={handleSubmit}
-            isEditing={
-              Boolean(editingTransaction)
-            }
+            isEditing={Boolean(editingTransaction)}
           />
 
           <DeleteModal
             isOpen={isDeleteModalOpen}
             onClose={closeDeleteModal}
             onConfirm={deleteTransaction}
-            transaction={
-              deletingTransaction
-            }
+            transaction={deletingTransaction}
           />
         </div>
       )}

@@ -1,185 +1,201 @@
-# ExpenseFlow
-![Expense Tracker Screenshot](Exp.png)
-A modern, responsive, and feature-rich personal expense management application built with React.
+# ExpenseFlow — Personal Finance Tracker
 
-ExpenseFlow helps users track income and expenses, organize transactions, monitor their financial balance, and manage their personal financial activity through a clean and intuitive interface.
+![ExpenseFlow Screenshot](Exp.png)
+
+**ExpenseFlow** is a modern and responsive personal finance application built with React and Supabase. It helps users manage their income and expenses, organize transactions, monitor their financial balance, and keep their financial records organized through a clean and intuitive dashboard.
 
 ## ✨ Features
 
-### Authentication
+### 🔐 Authentication
+- User registration with email and password
+- User login and logout
+- Email confirmation through Supabase Auth
+- Individual user accounts
+- Session management
 
-* Frontend login system
-* First name and last name
-* Password validation
-* Login and logout
-* Persistent login using LocalStorage
+### 💰 Transaction Management
+- Add new income and expense transactions
+- Edit existing transactions
+- Delete transactions with confirmation
+- Organize transactions by category
+- Track transaction dates and amounts
+- Automatically calculate income, expenses, and balance
 
-### Transaction Management
+### 🔎 Search & Filtering
+- Search transactions by title
+- Filter by transaction type
+- Filter by category
+- Combine search and filtering options
 
-* Add transactions
-* Edit transactions
-* Delete transactions
-* Delete confirmation modal
-* Income and expense types
-* Transaction categories
-* Transaction dates
-* Automatic transaction calculations
+### 📊 Financial Dashboard
+- Total income overview
+- Total expenses overview
+- Current balance
+- Transaction summary
+- Recent transactions
+- Expense category breakdown
 
-### Search & Filters
+### ⚙️ Settings & Notifications
+- Customize the display name
+- Select a preferred currency
+- Switch between light and dark themes
+- Receive transaction notifications
+- View notification history
 
-* Search transactions by title
-* Filter by transaction type
-* Filter by category
-* Combined search and filtering
+### 📱 User Experience
+- Responsive interface
+- Mobile-friendly layout
+- Interactive components
+- Confirmation modals
+- Empty states
+- Lucide icons
+- Smooth interface interactions
 
-### Dashboard
-
-* Total income
-* Total expenses
-* Current balance
-* Total transactions
-* Recent transactions
-* Expense category summary
-
-### Settings
-
-* Display name
-* Currency selection
-* Dark mode
-* Light mode
-* Persistent settings
-
-### Notifications
-
-* Transaction added notification
-* Transaction deleted notification
-* Login notification
-* Logout notification
-* Notification history
-* Notification counter
-
-### User Experience
-
-* Responsive design
-* Mobile-friendly layout
-* Empty states
-* Confirmation modals
-* Interactive buttons
-* Lucide icons
-* Smooth UI interactions
-
-### Data Persistence
-
-All transaction and application settings are stored using the browser's LocalStorage, allowing data to remain available after refreshing the page.
+### ☁️ Database & Security
+- Supabase authentication
+- PostgreSQL database integration
+- Cloud-based transaction storage
+- Row Level Security (RLS) policies
+- User-specific transaction access
+- Transaction data persists after refreshing the page
 
 ## 🛠️ Tech Stack
 
-* React
-* JavaScript
-* CSS
-* Vite
-* Lucide React
-* LocalStorage
+| Technology | Purpose |
+|---|---|
+| React | User interface |
+| JavaScript | Application logic |
+| Vite | Development server and build tool |
+| CSS | Styling and responsive layouts |
+| Supabase Auth | Authentication and user sessions |
+| Supabase PostgreSQL | Transaction database |
+| Supabase RLS | Database access control |
+| Lucide React | Icons |
 
 ## 📁 Project Structure
 
 ```text
-src/
-├── components/
-│   ├── CategoryItem.jsx
-│   ├── DeleteModal.jsx
-│   ├── ExpenseCategories.jsx
-│   ├── Login.jsx
-│   ├── RecentTransactions.jsx
-│   ├── Settings.jsx
-│   ├── Sidebar.jsx
-│   ├── SummaryCard.jsx
-│   ├── SummaryCards.jsx
-│   ├── Topbar.jsx
-│   ├── TransactionModal.jsx
-│   ├── TransactionRow.jsx
-│   └── TransactionToolbar.jsx
-│
-├── App.jsx
-├── index.css
-└── main.jsx
+expense-tracker-js/
+├── public/
+├── src/
+│   ├── components/
+│   │   ├── CategoryItem.jsx
+│   │   ├── DeleteModal.jsx
+│   │   ├── ExpenseCategories.jsx
+│   │   ├── Login.jsx
+│   │   ├── Notification.jsx
+│   │   ├── NotificationPanel.jsx
+│   │   ├── QuickAdd.jsx
+│   │   ├── RecentTransactions.jsx
+│   │   ├── Settings.jsx
+│   │   ├── Sidebar.jsx
+│   │   ├── SummaryCard.jsx
+│   │   ├── SummaryCards.jsx
+│   │   ├── Topbar.jsx
+│   │   ├── TransactionModal.jsx
+│   │   ├── TransactionRow.jsx
+│   │   └── TransactionToolbar.jsx
+│   ├── lib/
+│   │   └── supabase.js
+│   ├── App.jsx
+│   ├── global.css
+│   └── main.jsx
+├── .gitignore
+├── index.html
+├── package.json
+├── package-lock.json
+└── vite.config.js
 ```
 
 ## 🚀 Getting Started
 
-Clone the repository:
+### Prerequisites
+
+- Node.js and npm
+- A Supabase account
+
+### 1. Clone the Repository
 
 ```bash
 git clone https://github.com/aminrasooli2007-svg/expense-tracker-js.git
 ```
 
-Navigate to the project:
+### 2. Navigate to the Project
 
 ```bash
 cd expense-tracker-js
 ```
 
-Install dependencies:
+### 3. Install Dependencies
 
 ```bash
 npm install
 ```
 
-Start the development server:
+### 4. Configure Supabase
+
+Create a `.env.local` file in the project root directory and add your Supabase project credentials:
+
+```env
+VITE_SUPABASE_URL=https://YOUR_PROJECT_REF.supabase.co
+VITE_SUPABASE_PUBLISHABLE_KEY=YOUR_SUPABASE_PUBLISHABLE_KEY
+```
+
+Replace the placeholder values with the URL and publishable key from your Supabase project.
+
+Ensure that the `transactions` table and its Row Level Security policies are configured in Supabase.
+
+**Security note:** Never expose a Supabase secret key in frontend code or commit private environment files to GitHub. Keep `.env.local` out of version control.
+
+### 5. Start the Development Server
 
 ```bash
 npm run dev
 ```
 
-Open the local development URL provided by Vite in your browser.
+Open the local URL displayed by Vite in your browser.
 
-## 🔐 Demo Login
+## 🗄️ Database
 
-The current authentication system is frontend-only and is intended for demonstration purposes.
+ExpenseFlow uses a PostgreSQL database managed by Supabase.
 
-Password:
+The `transactions` table stores information such as:
 
-```text
-admin00123
-```
+- Transaction ID
+- User ID
+- Title
+- Amount
+- Type
+- Category
+- Date
+- Creation timestamp
 
-## ⚠️ Important Note
-
-ExpenseFlow currently uses LocalStorage for authentication, transactions, settings, and notifications.
-
-This means the authentication system is not suitable for production applications that require real user security.
-
-A future version could connect the application to a backend API and database for real authentication and multi-user data management.
+Row Level Security policies restrict authenticated users to their own transaction records. Users can manage their transactions without accessing another user's records through the normal application flow.
 
 ## 📌 Project Status
 
-**Version 1.0 — Completed**
+**Status: Actively Developed**
 
-The main functionality and UI of ExpenseFlow have been implemented and tested.
+The core interface, authentication, and transaction management features have been implemented and tested. Further improvements are planned as the project evolves.
 
 ## 🎯 Future Improvements
 
-Possible future improvements include:
-
-* Backend authentication
-* Database integration
-* Multi-user accounts
-* Cloud data synchronization
-* Financial charts
-* Export transactions
-* Recurring transactions
-* Advanced analytics
-* Real-time notifications
+- Financial charts and visual analytics
+- Export transactions to CSV
+- Recurring transactions
+- Advanced financial reports
+- Improved account profile management
+- Cloud synchronization for additional user preferences
+- Additional accessibility and usability improvements
 
 ## 👨‍💻 Author
 
 **Amin Rasooli**
 
-Frontend Developer
+Frontend Developer | Software Engineering Student
 
-GitHub:
-https://github.com/aminrasooli2007-svg
+- GitHub: [aminrasooli2007-svg](https://github.com/aminrasooli2007-svg)
 
-## 📄 License
+## 📄 Purpose
 
-This project was created for learning, portfolio development, and educational purposes.
+ExpenseFlow is a personal project created for learning, portfolio development, and practical experience with React, Supabase, database integration, and authentication.

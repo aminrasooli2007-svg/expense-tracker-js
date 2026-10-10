@@ -7,7 +7,7 @@
 ## ✨ Features
 
 ### 🔐 Authentication
-- User registration with email and password
+- User registration with email and password 
 - User login and logout
 - Email confirmation through Supabase Auth
 - Individual user accounts
